@@ -25,10 +25,7 @@ import java.util.Objects;
 class EmployeeServiceApplicationTests {
 
 	@Container
-	public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:14")
-			.withDatabaseName("postgres")
-			.withUsername("postgres")
-			.withPassword("P@ssw0rd");
+	public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:14");
 
 
 	@DynamicPropertySource
@@ -41,7 +38,7 @@ class EmployeeServiceApplicationTests {
 	@Container
 	public static GenericContainer<?> departmentService =
 			new GenericContainer<>(DockerImageName.parse("department-service:latest"))
-					.withExposedPorts(8081, 8081)
+					.withExposedPorts(8081)
 					.waitingFor(Wait.forHttp("/department/1"));
 
 	@Autowired
@@ -54,7 +51,6 @@ class EmployeeServiceApplicationTests {
 	void assertEmployeeCountByDepartmentId() {
 
 		List<Employee> employeeList = employeeRepository.findByDepartmentId(1);
-		System.out.println("Retrieved employeeList count: " + employeeList.size());
 		assert employeeList.size() == 3;
 	}
 
@@ -68,7 +64,6 @@ class EmployeeServiceApplicationTests {
 		Department department =
 				restTemplate.getForObject(departmentRestEndpoint, Department.class);
 
-		System.out.println("Retrieved department details: " + department);
 		assert Objects.equals(Objects.requireNonNull(department).getName(), "Engineering");
 	}
 
